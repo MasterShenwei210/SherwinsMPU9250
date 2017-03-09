@@ -15,15 +15,12 @@
 
 #include <SherwinsMPU9250.h>
 
-SherwinsMPU9250 accelGyroMag(2, 250, 11.52);//Constructor takes desired accelerometer and gyroscope scales and 
-                                            //declination angle as argument for magnitometer calibration. 
-                                            //You can find your declination angle at: http://www.ngdc.noaa.gov/geomag-web/
+SherwinsMPU9250 accelGyroMag(11.52);//Constructor takes declination angle as argument for magnitometer calibration. 
+                                    //You can find your declination angle at: http://www.ngdc.noaa.gov/geomag-web/
 void setup() {
-  
   Serial.begin(115200);
   Wire.begin();
   accelGyroMag.initializeEverything(); //make sure to rotate sensor a lot around z axis for min/max calibration.
-  
   //accelGyroMag.initializeWithoutMagnetometer(); //use instead if magnetometer is not being used     
 }
 

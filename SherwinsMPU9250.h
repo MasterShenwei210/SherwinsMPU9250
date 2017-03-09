@@ -32,10 +32,11 @@
 
 class SherwinsMPU9250{
     public:
-        SherwinsMPU9250(int accelScale, int gyroScale, float decl = 0);
+        SherwinsMPU9250(float decl = 0);
         void initializeEverything();
         void initializeWithoutMagnetometer();
         float getDt();
+         void readRaw9axis(int16_t *ax, int16_t *ay, int16_t *az, int16_t *gx, int16_t *gy, int16_t *gz, int16_t *mx, int16_t *my, int16_t *mz);
         void getBurstRead(float* Ax, float* Ay, float* Az, float* Gx, float* Gy, float* Gz, float* Mx, float* My, float* Mz);
 
         float find_z_aAngle();
@@ -77,7 +78,6 @@ class SherwinsMPU9250{
 
 
     private:
-        void readRaw9axis(int16_t *ax, int16_t *ay, int16_t *az, int16_t *gx, int16_t *gy, int16_t *gz, int16_t *mx, int16_t *my, int16_t *mz);
         void calibrateMinMax();
         void findScales();
         void initialize_MPU9250();

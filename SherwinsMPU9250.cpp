@@ -14,54 +14,15 @@ PARAMETERS:
     stand for +/- 250deg/sec, 500deg/sec, 1000deg/sec, 2000deg/sec
     (lower ranges are more accurate)
 **/
-SherwinsMPU9250::SherwinsMPU9250(int accelScale, int gyroScale, float decl){
+SherwinsMPU9250::SherwinsMPU9250(float decl){
     if(decl != 0){
         declination = decl * PI/180;
     }
+    accelConfigByte = 0b00000000;
+    accelConvert = 16384;
 
-    switch(accelScale){
-        case 2:
-            accelConfigByte = 0b00000000;
-            accelConvert = 16384;
-            break;
-
-        case 4:
-            accelConfigByte = 0b00001000;
-            accelConvert = 8192;
-            break;
-
-        case 8:
-            accelConfigByte = 0b00010000;
-            accelConvert = 4096;
-            break;
-
-        case 16:
-            accelConfigByte = 0b00011000;
-            accelConvert = 2048;
-            break;
-    }
-
-    switch(gyroScale){
-        case 250:
-            gyroConfigByte = 0b00000000;
-            gyroConvert = 131;
-            break;
-
-        case 500:
-            accelConfigByte = 0b00001000;
-            accelConvert = 8192;
-            break;
-
-        case 1000:
-            accelConfigByte = 0b00010000;
-            accelConvert = 4096;
-            break;
-
-        case 2000:
-            accelConfigByte = 0b00011000;
-            accelConvert = 2048;
-            break;
-    }
+    gyroConfigByte = 0b00000000;
+    gyroConvert = 131;
 }
 
 void SherwinsMPU9250::writeByte(uint16_t address, uint8_t data){
@@ -87,12 +48,12 @@ void SherwinsMPU9250::readByte(uint16_t address, uint8_t *dataOut){
 
     if(Wire.available() > 0){
         while(Wire.available() > 0){
-            buffer[0] = Wire.read();
+            buffer[19] = Wire.read();
         }
     }
     Wire.endTransmission();
 
-    *dataOut = buffer[0];
+    *dataOut = buffer[19];
 }
 
 void SherwinsMPU9250::readMagByte(uint16_t address, uint8_t *dataOut){
@@ -105,11 +66,11 @@ void SherwinsMPU9250::readMagByte(uint16_t address, uint8_t *dataOut){
 
     if(Wire.available() > 0){
         while(Wire.available() > 0){
-            buffer[0] = Wire.read();
+            buffer[19] = Wire.read();
         }
     }
     Wire.endTransmission();
-    *dataOut = buffer[0];
+    *dataOut = buffer[19];
 }
 
 void SherwinsMPU9250::initialize_MPU9250(){
@@ -187,16 +148,15 @@ void SherwinsMPU9250::readRaw9axis(int16_t *ax, int16_t *ay, int16_t *az, int16_
     readMagByte(MAG_ZOUT_H, &buffer[16]);
     readMagByte(MAG_ZOUT_L, &buffer[17]);
 
-    *ax = (buffer[0] << 8) | buffer[1];
-    *ay = (buffer[2] << 8) | buffer[3];
-    *az = (buffer[4] << 8) | buffer[5];
-    *gx = (buffer[6] << 8) | buffer[7];
-    *gy = (buffer[8] << 8) | buffer[9];
-    *gz = (buffer[10] << 8) | buffer[11];
-    *mx = (buffer[12] << 8) | buffer[13];
-    *my = (buffer[14] << 8) | buffer[15];
-    *mz = (buffer[16] << 8) | buffer[17];
-
+    *ax = (((int16_t)buffer[0]) << 8) | buffer[1];
+    *ay = (((int16_t)buffer[2]) << 8) | buffer[3];
+    *az = (((int16_t)buffer[4]) << 8) | buffer[5];
+    *gx = (((int16_t)buffer[6]) << 8) | buffer[7];
+    *gy = (((int16_t)buffer[8]) << 8) | buffer[9];
+    *gz = (((int16_t)buffer[10]) << 8) | buffer[11];
+    *mx = (((int16_t)buffer[12]) << 8) | buffer[13];
+    *my = (((int16_t)buffer[14]) << 8) | buffer[15];
+    *mz = (((int16_t)buffer[16]) << 8) | buffer[17];
 }
 
 /**
@@ -248,7 +208,7 @@ void SherwinsMPU9250::initializeAngles(){
     getBurstRead(&accel_x, &accel_y, &accel_z, &gyro_x, &gyro_y, &gyro_z,&mag_x, &mag_y, &mag_z);
 
     zAngle = atan2(accel_x,accel_y)*180/PI;
-    yAngle = atan2(accel_z,accel_x)*180/PI;
+    yAngle = atan2(accel_x,accel_z)*180/PI;
     xAngle = atan2(accel_y,accel_z)*180/PI;
 
  }
