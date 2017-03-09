@@ -5,14 +5,6 @@
 Input the declination angle if magnetometer is used.
 Depends on location. You can find your declination
 angle at: http://www.ngdc.noaa.gov/geomag-web/
-
-PARAMETERS:
-    1) desired accelerometer scale. Enter 2, 4, 8, or 16.
-    stand for +/- 2g, 4g, 8g, 16g
-    (lower ranges are more accurate)
-    2) desired gyroscope scale. Enter 250, 500, 1000, or 2000.
-    stand for +/- 250deg/sec, 500deg/sec, 1000deg/sec, 2000deg/sec
-    (lower ranges are more accurate)
 **/
 SherwinsMPU9250::SherwinsMPU9250(float decl){
     if(decl != 0){
